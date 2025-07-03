@@ -1,12 +1,27 @@
-import React from 'react';
-import { useAuth } from '../context/AuthContext';
+'use client';
 
-const LogoutButton: React.FC = () => {
-  const { logout } = useAuth();
+import React from 'react';
+import { useRouter } from 'next/navigation';
+
+const ServerLogoutButton = () => {
+  const router = useRouter();
+  
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth', {
+        method: 'DELETE',
+      });
+      
+      router.push('/login');
+      router.refresh(); // Force refresh to update auth state
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <button
-      onClick={logout}
+      onClick={handleLogout}
       className="text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 py-1.5 px-3 rounded-lg transition-colors flex items-center gap-1"
     >
       <svg className="h-3.5 w-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -17,4 +32,4 @@ const LogoutButton: React.FC = () => {
   );
 };
 
-export default LogoutButton;
+export default ServerLogoutButton;

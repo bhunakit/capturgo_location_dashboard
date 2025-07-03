@@ -1,22 +1,19 @@
-"use client";
+'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
-import { LocationData } from '../types';
 import { supabase } from '../lib/supabase';
-import { AuthProvider, useAuth } from '../context/AuthContext';
-import LoginPage from '../components/LoginPage';
-import LogoutButton from '../components/LogoutButton';
+import { LocationData } from '../types';
+import ServerLogoutButton from '../components/ServerLogoutButton';
+
+// Import Map component with dynamic loading to prevent SSR issues
+const Map = dynamic(() => import('../components/Map'), {
+  ssr: false,
+});
 
 // Import UserSelector component
 const UserSelector = dynamic(() => import('../components/UserSelector'), {
-  ssr: false
-});
-
-// Import Map component with dynamic loading (no SSR) to avoid mapbox-gl issues
-const Map = dynamic(() => import('../components/Map'), {
   ssr: false,
-  loading: () => <div className="w-full h-[70vh] bg-gray-100 rounded-lg flex items-center justify-center">Loading map...</div>
 });
 
 function Dashboard() {
@@ -24,7 +21,23 @@ function Dashboard() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  const [username, setUsername] = useState<string>("");
+  const [username, setUsername] = useState<string | null>(null);
+  
+  useEffect(() => {
+    // Check if we're authenticated on the client side
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('/api/auth/check');
+        if (!response.ok) {
+          window.location.href = '/login';
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+      }
+    };
+    
+    checkAuth();
+  }, []);
 
   const handleUserSelect = async (userId: string) => {
     if (!userId) {
@@ -91,7 +104,7 @@ function Dashboard() {
               Select a user to view their location data
             </p>
           </div>
-          <LogoutButton />
+          <ServerLogoutButton />
         </header>
 
         <div className="bg-white dark:bg-gray-800 shadow-sm rounded-xl p-5">
@@ -138,16 +151,6 @@ function Dashboard() {
   );
 }
 
-function Home() {
-  const { isAuthenticated } = useAuth();
-  
-  return isAuthenticated ? <Dashboard /> : <LoginPage />;
-}
-
-export default function App() {
-  return (
-    <AuthProvider>
-      <Home />
-    </AuthProvider>
-  );
+export default function Home() {
+  return <Dashboard />;
 }
