@@ -1,103 +1,129 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
+import { LocationData } from '../types';
+import { supabase } from '../lib/supabase';
+
+// Import UserSelector component
+const UserSelector = dynamic(() => import('../components/UserSelector'), {
+  ssr: false
+});
+
+// Import Map component with dynamic loading (no SSR) to avoid mapbox-gl issues
+const Map = dynamic(() => import('../components/Map'), {
+  ssr: false,
+  loading: () => <div className="w-full h-[70vh] bg-gray-100 rounded-lg flex items-center justify-center">Loading map...</div>
+});
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [locationData, setLocationData] = useState<LocationData[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [username, setUsername] = useState<string>("");
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleUserSelect = async (userId: string) => {
+    if (!userId) {
+      setLocationData([]);
+      setSelectedUserId(null);
+      setUsername("");
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+      setSelectedUserId(userId);
+      
+      // Fetch username from profiles table
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('username')
+        .eq('id', userId)
+        .single();
+        
+      if (profileData?.username) {
+        setUsername(profileData.username);
+      } else {
+        // If no username found, use truncated user ID
+        setUsername(`User ${userId.substring(0, 8)}...`);
+      }
+      
+      // Log any profile fetch errors but continue with location data
+      if (profileError) {
+        console.error('Error fetching profile:', profileError);
+      }
+
+      const { data, error } = await supabase
+        .from('locations_aggregated')
+        .select('latitude, longitude, created_at, speed')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+
+      // Add user_id to each location data item to match the LocationData type
+      const locationsWithUserId = (data || []).map(item => ({
+        ...item,
+        user_id: userId
+      }));
+      setLocationData(locationsWithUserId);
+    } catch (err) {
+      console.error('Error fetching location data:', err);
+      setError('Failed to load location data');
+      setLocationData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
+        <header className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900">Location Traces Dashboard</h1>
+          <p className="mt-2 text-sm text-gray-600">
+            View location traces for users by selecting a username
+          </p>
+        </header>
+
+        <div className="bg-white shadow rounded-lg p-6">
+          <UserSelector onUserSelect={handleUserSelect} />
+          
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-md">
+              {error}
+            </div>
+          )}
+
+          {loading ? (
+            <div className="w-full h-[70vh] bg-gray-100 rounded-lg flex items-center justify-center">
+              Loading location data...
+            </div>
+          ) : locationData.length > 0 ? (
+            <div>
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-lg font-medium text-gray-900">
+                  Location Trace for {username || `User ${selectedUserId?.substring(0, 8)}...`}
+                </h2>
+                <span className="text-sm text-gray-500">
+                  {locationData.length} data points
+                </span>
+              </div>
+              <Map locationData={locationData} />
+            </div>
+          ) : selectedUserId ? (
+            <div className="w-full h-[70vh] bg-gray-100 rounded-lg flex items-center justify-center">
+              No location data found for this user
+            </div>
+          ) : (
+            <div className="w-full h-[70vh] bg-gray-100 rounded-lg flex items-center justify-center">
+              Select a user to view their location traces
+            </div>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      </div>
     </div>
   );
 }
