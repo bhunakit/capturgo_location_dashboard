@@ -24,10 +24,16 @@ const Map: React.FC<MapProps> = ({ locationData }) => {
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
+      style: 'mapbox://styles/mapbox/light-v11', // Use dark mode for a more modern look
       center: [-74.5, 40], // Default center (will be updated when data loads)
-      zoom: 2
+      zoom: 2,
+      attributionControl: false // Remove attribution for cleaner look
     });
+    
+    // Add minimal attribution in bottom right
+    map.current.addControl(new mapboxgl.AttributionControl({
+      compact: true
+    }));
 
     map.current.on('load', () => {
       setLoaded(true);
@@ -72,22 +78,33 @@ const Map: React.FC<MapProps> = ({ locationData }) => {
         'line-cap': 'round'
       },
       paint: {
-        'line-color': '#0080ff',
-        'line-width': 3
+        'line-color': '#3b82f6',
+        'line-width': 2,
+        'line-opacity': 0.8
       }
     });
 
-    // Add markers for each location
+    // Add custom dot markers for each location
     locationData.forEach((location) => {
-      const popup = new mapboxgl.Popup({ offset: 25 })
+      // Create a simple popup with minimal info
+      const popup = new mapboxgl.Popup({ offset: 5, closeButton: false })
         .setHTML(`
-          <div>
-            <p><strong>Time:</strong> ${new Date(location.created_at).toLocaleString()}</p>
-            <p><strong>Speed:</strong> ${location.speed} km/h</p>
+          <div style="font-family: system-ui, sans-serif; padding: 8px; font-size: 12px;">
+            <p>${new Date(location.created_at).toLocaleString()}</p>
+            <p>${location.speed.toFixed(1)} km/h</p>
           </div>
         `);
 
-      new mapboxgl.Marker()
+      // Create a custom dot marker element
+      const el = document.createElement('div');
+      el.className = 'dot-marker';
+      el.style.width = '8px';
+      el.style.height = '8px';
+      el.style.borderRadius = '50%';
+      el.style.backgroundColor = '#3b82f6';
+      el.style.border = '2px solid #ffffff';
+      
+      new mapboxgl.Marker(el)
         .setLngLat([location.longitude, location.latitude])
         .setPopup(popup)
         .addTo(map.current!);
@@ -102,7 +119,7 @@ const Map: React.FC<MapProps> = ({ locationData }) => {
   }, [locationData, loaded]);
 
   return (
-    <div ref={mapContainer} className="w-full h-[70vh] rounded-lg shadow-lg" />
+    <div ref={mapContainer} className="w-full h-[70vh] rounded-xl shadow-sm overflow-hidden" />
   );
 };
 
