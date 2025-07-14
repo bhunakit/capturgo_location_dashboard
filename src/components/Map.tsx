@@ -24,7 +24,7 @@ const Map: React.FC<MapProps> = ({ locationData }) => {
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/light-v11', // Use dark mode for a more modern look
+      style: 'mapbox://styles/mapbox/dark-v11', // Use dark mode for a more modern look
       center: [-74.5, 40], // Default center (will be updated when data loads)
       zoom: 2,
       attributionControl: false // Remove attribution for cleaner look

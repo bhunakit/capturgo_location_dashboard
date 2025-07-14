@@ -67,7 +67,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ onUserSelect, onFilterSelec
     <div className="w-full">
       <div className="max-w-md mx-auto">
         {loading ? (
-          <div className="flex items-center justify-center space-x-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-4 shadow-lg text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center justify-center space-x-2 bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-4 shadow-lg text-sm text-gray-400">
             <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -79,11 +79,11 @@ const UserSelector: React.FC<UserSelectorProps> = ({ onUserSelect, onFilterSelec
             {error}
           </div>
         ) : (
-          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg transition-all">
+          <div className="bg-gray-800/90 backdrop-blur-sm rounded-2xl p-4 shadow-lg transition-all">
             <div className="flex justify-between items-center mb-3">
-              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">View Mode</h3>
+              <h3 className="text-sm font-medium text-gray-300">View Mode</h3>
               <div className="flex items-center space-x-2">
-                <span className={`text-xs font-medium ${mode === 'user' ? 'text-blue-500' : 'text-gray-500 dark:text-gray-400'}`}>User</span>
+                <span className={`text-xs font-medium ${mode === 'user' ? 'text-gray-300' : 'text-gray-400'}`}>User</span>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
@@ -91,9 +91,9 @@ const UserSelector: React.FC<UserSelectorProps> = ({ onUserSelect, onFilterSelec
                     onChange={handleModeChange}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-gray-300 rounded-full peer peer-checked:bg-blue-500 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all dark:bg-gray-600"></div>
+                  <div className="w-9 h-5 bg-gray-600 rounded-full peer peer-checked:bg-gray-500 peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all"></div>
                 </label>
-                <span className={`text-xs font-medium ${mode === 'filter' ? 'text-blue-500' : 'text-gray-500 dark:text-gray-400'}`}>Filter</span>
+                <span className={`text-xs font-medium ${mode === 'filter' ? 'text-gray-300' : 'text-gray-400'}`}>Filter</span>
               </div>
             </div>
             {mode === 'user' ? (
@@ -102,7 +102,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ onUserSelect, onFilterSelec
                   id="user-select"
                   value={selectedUserId}
                   onChange={handleUserChange}
-                  className="block w-full rounded-full border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300/50 dark:ring-gray-600/50 focus:ring-2 focus:ring-blue-500 py-3 px-5 text-sm shadow-lg appearance-none transition-all"
+                  className="block w-full rounded-full border-0 bg-gray-800/90 backdrop-blur-sm text-white ring-1 ring-inset ring-gray-600/50 focus:ring-2 focus:ring-gray-500 py-3 px-5 text-sm shadow-lg appearance-none transition-all"
                 >
                   <option value="">Select user</option>
                   {userOptions.map((option) => (
@@ -111,7 +111,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ onUserSelect, onFilterSelec
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400">
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                   </svg>
@@ -124,7 +124,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ onUserSelect, onFilterSelec
                     id="age-range-select"
                     value={filters.age_range || ''}
                     onChange={(e) => handleFilterChange(e, 'age_range')}
-                    className="block w-full rounded-full border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300/50 dark:ring-gray-600/50 focus:ring-2 focus:ring-blue-500 py-2.5 px-5 text-sm shadow-lg appearance-none transition-all"
+                    className="block w-full rounded-full border-0 bg-gray-800/90 backdrop-blur-sm text-white ring-1 ring-inset ring-gray-600/50 focus:ring-2 focus:ring-gray-500 py-2.5 px-5 text-sm shadow-lg appearance-none transition-all"
                   >
                     <option value="">Any Age Range</option>
                     <option value="18-24">18-24</option>
@@ -133,7 +133,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ onUserSelect, onFilterSelec
                     <option value="45-54">45-54</option>
                     <option value="55+">55+</option>
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400">
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
@@ -144,14 +144,14 @@ const UserSelector: React.FC<UserSelectorProps> = ({ onUserSelect, onFilterSelec
                     id="gender-select"
                     value={filters.gender || ''}
                     onChange={(e) => handleFilterChange(e, 'gender')}
-                    className="block w-full rounded-full border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300/50 dark:ring-gray-600/50 focus:ring-2 focus:ring-blue-500 py-2.5 px-5 text-sm shadow-lg appearance-none transition-all"
+                    className="block w-full rounded-full border-0 bg-gray-800/90 backdrop-blur-sm text-white ring-1 ring-inset ring-gray-600/50 focus:ring-2 focus:ring-gray-500 py-2.5 px-5 text-sm shadow-lg appearance-none transition-all"
                   >
                     <option value="">Any Gender</option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400">
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
@@ -162,7 +162,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ onUserSelect, onFilterSelec
                     id="commute-mode-select"
                     value={filters.commute_mode || ''}
                     onChange={(e) => handleFilterChange(e, 'commute_mode')}
-                    className="block w-full rounded-full border-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300/50 dark:ring-gray-600/50 focus:ring-2 focus:ring-blue-500 py-2.5 px-5 text-sm shadow-lg appearance-none transition-all"
+                    className="block w-full rounded-full border-0 bg-gray-800/90 backdrop-blur-sm text-white ring-1 ring-inset ring-gray-600/50 focus:ring-2 focus:ring-gray-500 py-2.5 px-5 text-sm shadow-lg appearance-none transition-all"
                   >
                     <option value="">Any Commute Mode</option>
                     <option value="Car">Car</option>
@@ -171,7 +171,7 @@ const UserSelector: React.FC<UserSelectorProps> = ({ onUserSelect, onFilterSelec
                     <option value="Walk">Walk</option>
                     <option value="Other">Other</option>
                   </select>
-                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 dark:text-gray-400">
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-400">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
                     </svg>

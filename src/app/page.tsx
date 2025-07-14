@@ -151,13 +151,13 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen dark:bg-gray-900">
       {/* Map component - lowest z-index */}
       <div className="fixed inset-0 z-0">
         {locationData.length > 0 ? (
           <Map locationData={locationData} />
         ) : (
-          <div className="w-full h-screen bg-gray-100 dark:bg-gray-800" />
+          <div className="w-full h-screen bg-gray-800" />
         )}
       </div>
 
@@ -189,11 +189,11 @@ function Dashboard() {
         {/* User info overlay */}
         {locationData.length > 0 && mode === 'user' && (
           <div className="absolute bottom-5 left-0 right-0 px-4 sm:px-6 md:px-8 pointer-events-auto">
-            <div className="max-w-md mx-auto bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg flex items-center justify-between">
-              <h2 className="text-sm font-medium text-gray-900 dark:text-white">
+            <div className="max-w-md mx-auto bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg flex items-center justify-between">
+              <h2 className="text-sm font-medium text-white">
                 {username || `User ${selectedUserId?.substring(0, 8)}...`}
               </h2>
-              <span className="text-xs px-2 py-1 bg-blue-500/20 text-blue-700 dark:text-blue-400 rounded-full">
+              <span className="text-xs px-2 py-1 bg-gray-500/20 text-gray-300 rounded-full">
                 {locationData.length} Location Points
               </span>
             </div>
@@ -203,11 +203,11 @@ function Dashboard() {
         {/* Filter summary overlay */}
         {locationData.length > 0 && mode === 'filter' && (
           <div className="absolute bottom-5 left-0 right-0 px-4 sm:px-6 md:px-8 pointer-events-auto">
-            <div className="max-w-md mx-auto bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg flex items-center justify-between text-gray-900 dark:text-white">
+            <div className="max-w-md mx-auto bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg flex items-center justify-between text-white">
               <h2 className="text-sm font-medium flex-1 truncate">
                 {filterSummary}
               </h2>
-              <span className="text-xs px-2 py-1 bg-blue-500/20 text-blue-700 dark:text-blue-400 rounded-full">
+              <span className="text-xs px-2 py-1 bg-gray-500/20 text-gray-300 rounded-full">
                 {locationData.length} Location Points
               </span>
             </div>
@@ -217,7 +217,7 @@ function Dashboard() {
         {/* Empty state overlay */}
         {!loading && locationData.length === 0 && selectedUserId && mode === 'user' && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg text-gray-500 dark:text-gray-400 text-sm pointer-events-auto">
+            <div className="bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg text-gray-400 text-sm pointer-events-auto">
               No location data available
             </div>
           </div>
@@ -226,7 +226,7 @@ function Dashboard() {
         {/* Empty filter state overlay */}
         {!loading && locationData.length === 0 && mode === 'filter' && Object.values(filters).some((val) => val) && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg text-gray-500 dark:text-gray-400 text-sm pointer-events-auto">
+            <div className="bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg text-gray-400 text-sm pointer-events-auto">
               No data matching selected filters
             </div>
           </div>
@@ -235,7 +235,7 @@ function Dashboard() {
         {/* Initial state overlay */}
         {!loading && !selectedUserId && mode === 'user' && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg text-gray-500 dark:text-gray-400 text-sm pointer-events-auto">
+            <div className="bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg text-gray-400 text-sm pointer-events-auto">
               Select a user to view location data
             </div>
           </div>
@@ -244,7 +244,7 @@ function Dashboard() {
         {/* Initial filter state overlay */}
         {!loading && mode === 'filter' && !Object.values(filters).some((val) => val) && (
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg text-gray-500 dark:text-gray-400 text-sm pointer-events-auto">
+            <div className="bg-gray-800/90 backdrop-blur-sm rounded-full py-3 px-5 shadow-lg text-gray-400 text-sm pointer-events-auto">
               Apply filters to view demographic data
             </div>
           </div>
@@ -254,7 +254,7 @@ function Dashboard() {
       {/* Loading overlay - highest z-index */}
       {loading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-sm">
-          <div className="bg-white/90 dark:bg-gray-800/90 rounded-full py-3 px-5 shadow-lg flex items-center space-x-3 text-gray-500 dark:text-gray-300">
+          <div className="bg-gray-800/90 rounded-full py-3 px-5 shadow-lg flex items-center space-x-3 text-gray-300">
             <svg
               className="animate-spin h-5 w-5"
               xmlns="http://www.w3.org/2000/svg"
