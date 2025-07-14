@@ -119,7 +119,7 @@ const Map: React.FC<MapProps> = ({ locationData }) => {
   }, [locationData, loaded]);
 
   return (
-    <div ref={mapContainer} className="w-full h-[70vh] rounded-xl shadow-sm overflow-hidden" />
+    <div ref={mapContainer} className="w-full h-screen fixed inset-0 z-0" />
   );
 };
 
